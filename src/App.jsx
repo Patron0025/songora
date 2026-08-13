@@ -247,22 +247,27 @@ const UI = {
 
 
 function useDeviceClass() {
-  const getDevice = () => {
-    const w = window.innerWidth;
-    if (w <= 640) return "mobile";
-    if (w <= 1024) return "tablet";
+  const detect = () => {
+    if (window.matchMedia("(max-width: 767px)").matches) return "mobile";
+    if (window.matchMedia("(max-width: 1100px)").matches) return "tablet";
     return "desktop";
   };
 
-  const [device, setDevice] = useState(getDevice);
+  const [device, setDevice] = useState(detect);
 
   useEffect(() => {
-    const onResize = () => setDevice(getDevice());
-    window.addEventListener("resize", onResize);
-    window.addEventListener("orientationchange", onResize);
+    const mobile = window.matchMedia("(max-width: 767px)");
+    const tablet = window.matchMedia("(max-width: 1100px)");
+    const update = () => setDevice(detect());
+
+    mobile.addEventListener?.("change", update);
+    tablet.addEventListener?.("change", update);
+    window.addEventListener("orientationchange", update);
+
     return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
+      mobile.removeEventListener?.("change", update);
+      tablet.removeEventListener?.("change", update);
+      window.removeEventListener("orientationchange", update);
     };
   }, []);
 
@@ -1784,6 +1789,147 @@ function GlobalStyle() {
           font-size: 12px;
         }
       }
+
+
+      /* ===================== FINAL RESPONSIVE OVERRIDES v1.3 ===================== */
+      html, body, #root {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+      }
+
+      .songora-root.device-mobile,
+      .songora-root.device-tablet {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100dvh;
+        border-radius: 0;
+        overflow-x: hidden;
+      }
+
+      .songora-root.device-mobile .wizard,
+      .songora-root.device-tablet .wizard {
+        display: flex;
+        flex-direction: column !important;
+        width: 100%;
+        max-width: 100%;
+        overflow: visible !important;
+      }
+
+      .songora-root.device-mobile .rail,
+      .songora-root.device-tablet .rail {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        flex: 0 0 auto;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        border-right: 0 !important;
+        border-bottom: 1px solid var(--ink-3);
+        padding: 8px 10px !important;
+        gap: 6px;
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(20,24,26,.98);
+      }
+
+      .songora-root.device-mobile .rail-item,
+      .songora-root.device-tablet .rail-item {
+        flex: 0 0 auto !important;
+        min-width: auto !important;
+        white-space: nowrap;
+      }
+
+      .songora-root.device-mobile .rail-item:not(:last-child)::before,
+      .songora-root.device-tablet .rail-item:not(:last-child)::before {
+        display: none !important;
+      }
+
+      .songora-root.device-mobile .wizard-main,
+      .songora-root.device-tablet .wizard-main {
+        flex: 1 1 auto;
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        box-sizing: border-box;
+      }
+
+      .songora-root.device-mobile .wizard-panel,
+      .songora-root.device-tablet .wizard-panel {
+        min-width: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+
+      .songora-root.device-tablet .wizard-main {
+        padding: 18px !important;
+      }
+
+      .songora-root.device-tablet .grid-2,
+      .songora-root.device-tablet .grid-3,
+      .songora-root.device-tablet .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .songora-root.device-mobile .wizard-main {
+        padding: 10px !important;
+      }
+
+      .songora-root.device-mobile .wizard-panel {
+        padding: 14px !important;
+      }
+
+      .songora-root.device-mobile .grid-2,
+      .songora-root.device-mobile .grid-3,
+      .songora-root.device-mobile .grid-4 {
+        grid-template-columns: minmax(0, 1fr) !important;
+      }
+
+      .songora-root.device-mobile .rail-label {
+        display: none !important;
+      }
+
+      .songora-root.device-mobile .opt-card,
+      .songora-root.device-mobile .new-song-card,
+      .songora-root.device-mobile .project-card,
+      .songora-root.device-mobile .textarea,
+      .songora-root.device-mobile .text-input {
+        min-width: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+      }
+
+      .songora-root.device-mobile .wizard-nav {
+        width: 100%;
+        gap: 8px;
+        position: sticky;
+        bottom: 0;
+        z-index: 30;
+        padding: 10px 0 4px;
+        background: linear-gradient(to top, var(--ink) 80%, transparent);
+      }
+
+      .songora-root.device-mobile .wizard-nav .btn-ghost,
+      .songora-root.device-mobile .wizard-nav .btn-primary {
+        flex: 1 1 0;
+        min-width: 0;
+      }
+
+      @media (max-width: 767px) {
+        .songora-root .landing-hero { min-width: 0 !important; }
+        .songora-root .landing-visual { min-width: 0 !important; }
+        .songora-root .header { padding: 12px 14px; }
+        .songora-root .header .lang-switch { display: flex; }
+        .songora-root .lang-btn { padding: 4px 6px; font-size: 10px; }
+      }
+
     `}</style>
   );
 }

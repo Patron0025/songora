@@ -26,3 +26,8 @@ npm run dev
 Framework: Vite  
 Build Command: `npm run build`  
 Output Directory: `dist`
+
+
+## Version
+
+Responsive-Fix v1.3: Mobile ≤ 767px, Tablet ≤ 1100px, Desktop > 1100px.
