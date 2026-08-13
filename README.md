@@ -1,6 +1,12 @@
 # songora
 
-Vite + React Projekt für die songora.ai Demo.
+Responsive React/Vite Demo mit Webseitensprachen:
+
+- Deutsch
+- English
+- Türkçe
+
+Die gewählte Webseitensprache wird im Browser gespeichert und bleibt beim nächsten Besuch erhalten.
 
 ## Lokal starten
 
@@ -9,20 +15,8 @@ npm install
 npm run dev
 ```
 
-Danach die von Vite angezeigte lokale Adresse im Browser öffnen.
+## Vercel
 
-## Auf GitHub hochladen
-
-Lege alle Dateien dieses Ordners in dein GitHub-Repository `songora`.
-
-## Mit Vercel veröffentlichen
-
-1. In Vercel anmelden.
-2. **Add New → Project** wählen.
-3. Das GitHub-Repository `songora` importieren.
-4. Framework Preset: **Vite**.
-5. Build Command: `npm run build`.
-6. Output Directory: `dist`.
-7. Deploy starten.
-
-Die eigentliche App liegt unter `src/App.jsx`.
+Framework: Vite  
+Build Command: `npm run build`  
+Output Directory: `dist`

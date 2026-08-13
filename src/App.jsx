@@ -16,6 +16,252 @@ const GENRES = [
 ];
 
 const LANGUAGES = ["Türkisch", "Deutsch", "Englisch", "Arabisch", "Französisch"];
+
+const SITE_LANGS = [
+  { id: "de", label: "Deutsch", short: "DE" },
+  { id: "en", label: "English", short: "EN" },
+  { id: "tr", label: "Türkçe", short: "TR" },
+];
+
+const UI = {
+  de: {
+    demoStart: "Demo starten",
+    ideaLyricsMusic: "Idee · Lyrics · Musik · Cover · Video",
+    landingTitleA: "Von der Idee",
+    landingTitleB: "zum fertigen",
+    landingTitleC: "Song.",
+    landingText: "Wähle Stil, Sprache und Stimmung — songora.ai schreibt Lyrics, komponiert den Style-Prompt und produziert deinen Track in Minuten.",
+    prodTime: "ø Produktionszeit",
+    genres: "Genres",
+    perSong: "pro Song",
+    welcome: "Willkommen zurück",
+    dashboardText: "Erstelle einen neuen Song oder mach bei einem Projekt weiter.",
+    newSong: "Neuen Song erstellen",
+    newSongDesc: "Genre wählen → Lyrics → Musik → Cover → Video",
+    projects: "Deine Projekte",
+    next: "Weiter",
+    back: "Zurück",
+    genre: "Musikrichtung",
+    genreDesc: "Wähle den Stil, der zu deinem Song passt.",
+    langEpoch: "Sprache & Epoche",
+    langEpochDesc: "In welcher Sprache und welchem Klang-Jahrzehnt soll der Song entstehen?",
+    language: "Sprache",
+    eraMulti: "Epoche (Mehrfachauswahl möglich)",
+    voiceMood: "Stimme & Stimmung",
+    voiceMoodDesc: "Wer singt, und welche Emotion soll mitschwingen?",
+    voice: "Stimme",
+    vocalAge: "Stimmalter",
+    mood: "Stimmung",
+    liveChoir: "Live & Chor",
+    liveChoirDesc: "Optionale Klang-Elemente für mehr Atmosphäre.",
+    liveFx: "Live-Effekt",
+    choir: "Chor",
+    songIdea: "Songidee",
+    songIdeaDesc: "Beschreibe deine Idee in Stichwörtern, getrennt durch Kommas.",
+    lyrics: "Lyrics",
+    lyricsDesc: "Prüfe und bearbeite den Songtext, bevor es weitergeht.",
+    regenerate: "↻ Neu generieren",
+    moreEmotional: "Emotionaler machen",
+    songName: "Songname",
+    songNameDesc: "Wähle einen Vorschlag oder gib deinen eigenen Titel ein.",
+    ownSongName: "Eigener Songname …",
+    stylePrompt: "Music Style Prompt",
+    stylePromptDesc: "Automatisch erstellt aus Genre, Stimme, Stimmung und Lyrics — frei editierbar.",
+    recreate: "↻ Neu erstellen",
+    music: "Musik",
+    musicDesc: "Wähle deine bevorzugte Version.",
+    cover: "Cover",
+    coverDesc: "Ein Bild für deinen Song — optional.",
+    aiCover: "KI-Cover erstellen",
+    aiCoverDesc: "Passend zu Lyrics & Stimmung",
+    uploadPhoto: "Eigenes Foto hochladen",
+    uploadPhotoDesc: "Aus deiner Bibliothek",
+    existingImage: "Vorhandenes Bild",
+    existingImageDesc: "Aus früheren Projekten",
+    noCover: "Kein Cover",
+    noCoverDesc: "Song bleibt ohne Bild",
+    chooseImage: "Bild auswählen",
+    done: "Song fertig 🎉",
+    doneDesc: "Dein Track ist bereit — hör rein, exportiere oder starte den nächsten.",
+    createVideo: "{t.createVideo}",
+    format: "Format",
+    effect: "Effekt",
+    render: "{t.render}",
+    rendering: "Video wird gerendert …",
+    videoReady: "Video bereit",
+    export: "Export",
+    restart: "Neuen Song erstellen",
+    dashboard: "Zum Dashboard",
+    websiteLanguage: "Webseitensprache",
+    generatingLyrics: "ChatGPT schreibt deine Lyrics …",
+    generatingMusic: "Musik wird produziert …",
+    generatingGeneric: "Wird generiert …",
+  },
+  en: {
+    demoStart: "Start demo",
+    ideaLyricsMusic: "Idea · Lyrics · Music · Cover · Video",
+    landingTitleA: "From your idea",
+    landingTitleB: "to a finished",
+    landingTitleC: "song.",
+    landingText: "Choose style, language and mood — songora.ai writes lyrics, creates the style prompt and produces your track in minutes.",
+    prodTime: "avg. production time",
+    genres: "Genres",
+    perSong: "per song",
+    welcome: "Welcome back",
+    dashboardText: "Create a new song or continue one of your projects.",
+    newSong: "Create new song",
+    newSongDesc: "Choose genre → Lyrics → Music → Cover → Video",
+    projects: "Your projects",
+    next: "Next",
+    back: "Back",
+    genre: "Music genre",
+    genreDesc: "Choose the style that fits your song.",
+    langEpoch: "Language & era",
+    langEpochDesc: "In which language and sonic era should the song be created?",
+    language: "Language",
+    eraMulti: "Era (multiple selection possible)",
+    voiceMood: "Voice & mood",
+    voiceMoodDesc: "Who is singing, and what emotion should come through?",
+    voice: "Voice",
+    vocalAge: "Voice age",
+    mood: "Mood",
+    liveChoir: "Live & choir",
+    liveChoirDesc: "Optional sound elements for more atmosphere.",
+    liveFx: "Live effect",
+    choir: "Choir",
+    songIdea: "Song idea",
+    songIdeaDesc: "Describe your idea with keywords separated by commas.",
+    lyrics: "Lyrics",
+    lyricsDesc: "Review and edit the lyrics before continuing.",
+    regenerate: "↻ Regenerate",
+    moreEmotional: "Make more emotional",
+    songName: "Song title",
+    songNameDesc: "Choose a suggestion or enter your own title.",
+    ownSongName: "Your own song title …",
+    stylePrompt: "Music Style Prompt",
+    stylePromptDesc: "Automatically created from genre, voice, mood and lyrics — fully editable.",
+    recreate: "↻ Recreate",
+    music: "Music",
+    musicDesc: "Choose your preferred version.",
+    cover: "Cover",
+    coverDesc: "An image for your song — optional.",
+    aiCover: "Create AI cover",
+    aiCoverDesc: "Matching lyrics & mood",
+    uploadPhoto: "Upload your own photo",
+    uploadPhotoDesc: "From your library",
+    existingImage: "Existing image",
+    existingImageDesc: "From previous projects",
+    noCover: "No cover",
+    noCoverDesc: "Song stays without an image",
+    chooseImage: "Choose image",
+    done: "Song finished 🎉",
+    doneDesc: "Your track is ready — listen, export or start the next one.",
+    createVideo: "Create video",
+    format: "Format",
+    effect: "Effect",
+    render: "Render (−8 credits)",
+    rendering: "Video is rendering …",
+    videoReady: "Video ready",
+    export: "Export",
+    restart: "Create new song",
+    dashboard: "Go to dashboard",
+    websiteLanguage: "Website language",
+    generatingLyrics: "ChatGPT is writing your lyrics …",
+    generatingMusic: "Music is being produced …",
+    generatingGeneric: "Generating …",
+  },
+  tr: {
+    demoStart: "Demoyu başlat",
+    ideaLyricsMusic: "Fikir · Sözler · Müzik · Kapak · Video",
+    landingTitleA: "Fikirden",
+    landingTitleB: "tamamlanmış",
+    landingTitleC: "şarkıya.",
+    landingText: "Tarzı, dili ve ruh halini seç — songora.ai sözleri yazar, stil istemini oluşturur ve parçanı dakikalar içinde üretir.",
+    prodTime: "ort. üretim süresi",
+    genres: "Tür",
+    perSong: "şarkı başına",
+    welcome: "Tekrar hoş geldin",
+    dashboardText: "Yeni bir şarkı oluştur veya projelerinden birine devam et.",
+    newSong: "Yeni şarkı oluştur",
+    newSongDesc: "Tür seç → Sözler → Müzik → Kapak → Video",
+    projects: "Projelerin",
+    next: "İleri",
+    back: "Geri",
+    genre: "Müzik türü",
+    genreDesc: "Şarkına uygun tarzı seç.",
+    langEpoch: "Dil & dönem",
+    langEpochDesc: "Şarkı hangi dilde ve hangi dönemin sound'unda oluşturulsun?",
+    language: "Dil",
+    eraMulti: "Dönem (çoklu seçim mümkün)",
+    voiceMood: "Ses & ruh hali",
+    voiceMoodDesc: "Kim söylüyor ve hangi duygu hissedilsin?",
+    voice: "Ses",
+    vocalAge: "Ses yaşı",
+    mood: "Ruh hali",
+    liveChoir: "Canlı & koro",
+    liveChoirDesc: "Daha fazla atmosfer için isteğe bağlı ses öğeleri.",
+    liveFx: "Canlı efekti",
+    choir: "Koro",
+    songIdea: "Şarkı fikri",
+    songIdeaDesc: "Fikrini virgülle ayrılmış anahtar kelimelerle anlat.",
+    lyrics: "Şarkı sözleri",
+    lyricsDesc: "Devam etmeden önce sözleri kontrol et ve düzenle.",
+    regenerate: "↻ Yeniden üret",
+    moreEmotional: "Daha duygusal yap",
+    songName: "Şarkı adı",
+    songNameDesc: "Bir öneri seç veya kendi başlığını yaz.",
+    ownSongName: "Kendi şarkı adın …",
+    stylePrompt: "Music Style Prompt",
+    stylePromptDesc: "Tür, ses, ruh hali ve sözlerden otomatik oluşturulur — tamamen düzenlenebilir.",
+    recreate: "↻ Yeniden oluştur",
+    music: "Müzik",
+    musicDesc: "Tercih ettiğin versiyonu seç.",
+    cover: "Kapak",
+    coverDesc: "Şarkın için bir görsel — isteğe bağlı.",
+    aiCover: "AI kapak oluştur",
+    aiCoverDesc: "Sözler ve ruh haline uygun",
+    uploadPhoto: "Kendi fotoğrafını yükle",
+    uploadPhotoDesc: "Kütüphanenden",
+    existingImage: "Mevcut görsel",
+    existingImageDesc: "Önceki projelerden",
+    noCover: "Kapak yok",
+    noCoverDesc: "Şarkı görselsiz kalır",
+    chooseImage: "Görsel seç",
+    done: "Şarkı hazır 🎉",
+    doneDesc: "Parçan hazır — dinle, dışa aktar veya yenisine başla.",
+    createVideo: "Video oluştur",
+    format: "Format",
+    effect: "Efekt",
+    render: "Render et (−8 kredi)",
+    rendering: "Video hazırlanıyor …",
+    videoReady: "Video hazır",
+    export: "Dışa aktar",
+    restart: "Yeni şarkı oluştur",
+    dashboard: "Panele dön",
+    websiteLanguage: "Site dili",
+    generatingLyrics: "ChatGPT şarkı sözlerini yazıyor …",
+    generatingMusic: "Müzik üretiliyor …",
+    generatingGeneric: "Oluşturuluyor …",
+  },
+};
+
+function LangSwitch({ siteLang, setSiteLang }) {
+  return (
+    <div className="lang-switch" aria-label={UI[siteLang].websiteLanguage}>
+      {SITE_LANGS.map((lang) => (
+        <button
+          key={lang.id}
+          className={`lang-btn ${siteLang === lang.id ? "lang-btn-active" : ""}`}
+          onClick={() => setSiteLang(lang.id)}
+          title={lang.label}
+        >
+          {lang.short}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 const DECADES = ["1970er", "1980er", "1990er", "2000er"];
 
 const VOCAL_TYPES = [
@@ -292,20 +538,36 @@ function Chip({ active, onClick, children }) {
 /* --------------------------------- STEPS ----------------------------------- */
 
 const STEPS = [
-  { key: "genre", label: "Musikrichtung", icon: Music2 },
-  { key: "lang", label: "Sprache & Epoche", icon: Globe2 },
-  { key: "voice", label: "Stimme & Stimmung", icon: Mic },
-  { key: "fx", label: "Live & Chor", icon: Users },
-  { key: "idea", label: "Songidee", icon: Sparkles },
-  { key: "lyrics", label: "Lyrics", icon: Wand2 },
-  { key: "title", label: "Songname", icon: Disc3 },
-  { key: "style", label: "Style Prompt", icon: Radio },
-  { key: "music", label: "Musik", icon: Music },
-  { key: "cover", label: "Cover", icon: ImageIcon },
-  { key: "done", label: "Fertig", icon: Check },
+  { key: "genre", icon: Music2 },
+  { key: "lang", icon: Globe2 },
+  { key: "voice", icon: Mic },
+  { key: "fx", icon: Users },
+  { key: "idea", icon: Sparkles },
+  { key: "lyrics", icon: Wand2 },
+  { key: "title", icon: Disc3 },
+  { key: "style", icon: Radio },
+  { key: "music", icon: Music },
+  { key: "cover", icon: ImageIcon },
+  { key: "done", icon: Check },
 ];
 
-function StepRail({ step, form }) {
+function stepLabel(key, t) {
+  return {
+    genre: t.genre,
+    lang: t.langEpoch,
+    voice: t.voiceMood,
+    fx: t.liveChoir,
+    idea: t.songIdea,
+    lyrics: t.lyrics,
+    title: t.songName,
+    style: t.stylePrompt,
+    music: t.music,
+    cover: t.cover,
+    done: t.done,
+  }[key] || key;
+}
+
+function StepRail({ step, form, t }) {
   return (
     <div className="rail">
       {STEPS.map((s, i) => {
@@ -314,7 +576,7 @@ function StepRail({ step, form }) {
         return (
           <div key={s.key} className={`rail-item rail-${state}`}>
             <div className="rail-num">{state === "done" ? <Check size={12} /> : i + 1}</div>
-            <span className="rail-label">{s.label}</span>
+            <span className="rail-label">{stepLabel(s.key, t)}</span>
           </div>
         );
       })}
@@ -342,6 +604,12 @@ export default function SongoraApp() {
   const [videoState, setVideoState] = useState("idle"); // idle, rendering, ready
   const [videoFormat, setVideoFormat] = useState("16:9");
   const [videoFx, setVideoFx] = useState("Ken-Burns");
+  const [siteLang, setSiteLang] = useState(() => localStorage.getItem("songora-site-lang") || "de");
+  const t = UI[siteLang];
+  useEffect(() => {
+    localStorage.setItem("songora-site-lang", siteLang);
+    document.documentElement.lang = siteLang;
+  }, [siteLang]);
 
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 
@@ -439,19 +707,20 @@ export default function SongoraApp() {
           <div className="landing-glow" />
           <div className="landing-top">
             <div className="brand"><Disc3 size={20} /> songora<span className="brand-dot">.ai</span></div>
+            <LangSwitch siteLang={siteLang} setSiteLang={setSiteLang} />
           </div>
           <div className="landing-body">
             <div className="landing-hero">
-              <div className="eyebrow">Idee <span className="dot">·</span> Lyrics <span className="dot">·</span> Musik <span className="dot">·</span> Cover <span className="dot">·</span> Video</div>
-              <h1>Von der Idee<br /><em>zum fertigen</em> Song.</h1>
-              <p>Wähle Stil, Sprache und Stimmung — songora.ai schreibt Lyrics, komponiert den Style-Prompt und produziert deinen Track in Minuten.</p>
+              <div className="eyebrow">{t.ideaLyricsMusic}</div>
+              <h1>{t.landingTitleA}<br /><em>{t.landingTitleB}</em> {t.landingTitleC}</h1>
+              <p>{t.landingText}</p>
               <button className="btn-primary btn-lg" onClick={() => setView("dashboard")}>
-                Demo starten <ArrowRight size={16} />
+                {t.demoStart} <ArrowRight size={16} />
               </button>
               <div className="landing-stats">
-                <div><span className="stat-num">4,2 Min</span><span className="stat-label">ø Produktionszeit</span></div>
-                <div><span className="stat-num">5</span><span className="stat-label">Genres</span></div>
-                <div><span className="stat-num">3–5 €</span><span className="stat-label">pro Song</span></div>
+                <div><span className="stat-num">4,2 Min</span><span className="stat-label">{t.prodTime}</span></div>
+                <div><span className="stat-num">5</span><span className="stat-label">{t.genres}</span></div>
+                <div><span className="stat-num">3–5 €</span><span className="stat-label">{t.perSong}</span></div>
               </div>
             </div>
             <div className="landing-visual">
@@ -478,21 +747,21 @@ export default function SongoraApp() {
     return (
       <div className="songora-root">
         <GlobalStyle />
-        <Header credits={credits} onLogo={() => setView("dashboard")} />
+        <Header credits={credits} onLogo={() => setView("dashboard")} siteLang={siteLang} setSiteLang={setSiteLang} />
         <div className="page">
-          <h2 className="page-title">Willkommen zurück</h2>
-          <p className="muted mb-6">Erstelle einen neuen Song oder mach bei einem Projekt weiter.</p>
+          <h2 className="page-title">{t.welcome}</h2>
+          <p className="muted mb-6">{t.dashboardText}</p>
 
           <button className="new-song-card" onClick={startWizard}>
             <div className="new-song-icon"><Sparkles size={22} /></div>
             <div>
-              <div className="opt-title">Neuen Song erstellen</div>
-              <div className="opt-desc">Genre wählen → Lyrics → Musik → Cover → Video</div>
+              <div className="opt-title">{t.newSong}</div>
+              <div className="opt-desc">{t.newSongDesc}</div>
             </div>
             <ChevronRight size={18} style={{ marginLeft: "auto" }} />
           </button>
 
-          <h3 className="section-title">Deine Projekte</h3>
+          <h3 className="section-title">{t.projects}</h3>
           <div className="grid-2">
             {[
               { title: "Regen über Istanbul", genre: "Arabesk", mood: "Melancholisch" },
@@ -519,13 +788,13 @@ export default function SongoraApp() {
   return (
     <div className="songora-root">
       <GlobalStyle />
-      <Header credits={credits} onLogo={() => setView("dashboard")} />
+      <Header credits={credits} onLogo={() => setView("dashboard")} siteLang={siteLang} setSiteLang={setSiteLang} />
       <div className="wizard">
-        <StepRail step={step} form={form} />
+        <StepRail step={step} form={form} t={t} />
         <div className="wizard-main">
           <div className="panel wizard-panel">
             {generating ? (
-              <GeneratingState step={key} />
+              <GeneratingState step={key} t={t} />
             ) : (
               <div className="step-enter" key={key}>
               <StepContent
@@ -544,6 +813,7 @@ export default function SongoraApp() {
                 setVideoFx={setVideoFx}
                 restart={startWizard}
                 goDashboard={() => setView("dashboard")}
+                t={t}
               />
               </div>
             )}
@@ -552,10 +822,10 @@ export default function SongoraApp() {
           {key !== "done" && !generating && (
             <div className="wizard-nav">
               <button className="btn-ghost" onClick={back} disabled={step === 0}>
-                <ChevronLeft size={16} /> Zurück
+                <ChevronLeft size={16} /> {t.back}
               </button>
               <button className="btn-primary" onClick={next} disabled={!canContinue()}>
-                Weiter <ChevronRight size={16} />
+                {t.next} <ChevronRight size={16} />
               </button>
             </div>
           )}
@@ -567,13 +837,14 @@ export default function SongoraApp() {
 
 /* ----------------------------- SUBCOMPONENTS -------------------------------- */
 
-function Header({ credits, onLogo }) {
+function Header({ credits, onLogo, siteLang, setSiteLang }) {
   return (
     <div className="header">
       <div className="brand" onClick={onLogo} style={{ cursor: "pointer" }}>
         <Disc3 size={18} /> songora<span className="brand-dot">.ai</span>
       </div>
       <div className="header-right">
+        <LangSwitch siteLang={siteLang} setSiteLang={setSiteLang} />
         <div className="credits-pill"><Zap size={13} /> <span className="label-mono">{credits}</span></div>
         <div className="avatar">S</div>
       </div>
@@ -581,25 +852,25 @@ function Header({ credits, onLogo }) {
   );
 }
 
-function GeneratingState({ step }) {
+function GeneratingState({ step, t }) {
   const messages = {
-    idea: "ChatGPT schreibt deine Lyrics …",
-    style: "Musik wird produziert …",
+    idea: t.generatingLyrics,
+    style: t.generatingMusic,
   };
   return (
     <div className="generating">
       <Eq size={10} />
-      <p className="mt-4">{messages[step] || "Wird generiert …"}</p>
+      <p className="mt-4">{messages[step] || t.generatingGeneric}</p>
     </div>
   );
 }
 
 function StepContent(props) {
-  const { stepKey, form, set } = props;
+  const { stepKey, form, set, t } = props;
 
   if (stepKey === "genre") {
     return (
-      <StepShell title="Musikrichtung" desc="Wähle den Stil, der zu deinem Song passt.">
+      <StepShell title={t.genre} desc={t.genreDesc}>
         <div className="grid-2">
           {GENRES.map((g) => (
             <OptionCard key={g.id} title={g.label} desc={g.desc} active={form.genre === g.id}
@@ -612,9 +883,9 @@ function StepContent(props) {
 
   if (stepKey === "lang") {
     return (
-      <StepShell title="Sprache & Epoche" desc="In welcher Sprache und welchem Klang-Jahrzehnt soll der Song entstehen?">
+      <StepShell title={t.langEpoch} desc={t.langEpochDesc}>
         <div className="mb-5">
-          <div className="field-label">Sprache</div>
+          <div className="field-label">{t.language}</div>
           <div className="chip-row">
             {LANGUAGES.map((l) => (
               <Chip key={l} active={form.language === l} onClick={() => set({ language: l })}>{l}</Chip>
@@ -622,7 +893,7 @@ function StepContent(props) {
           </div>
         </div>
         <div>
-          <div className="field-label">Epoche (Mehrfachauswahl möglich)</div>
+          <div className="field-label">{t.eraMulti}</div>
           <div className="chip-row">
             {DECADES.map((d) => (
               <Chip key={d} active={form.decades.includes(d)}
@@ -638,9 +909,9 @@ function StepContent(props) {
 
   if (stepKey === "voice") {
     return (
-      <StepShell title="Stimme & Stimmung" desc="Wer singt, und welche Emotion soll mitschwingen?">
+      <StepShell title={t.voiceMood} desc={t.voiceMoodDesc}>
         <div className="mb-5">
-          <div className="field-label">Stimme</div>
+          <div className="field-label">{t.voice}</div>
           <div className="grid-3">
             {VOCAL_TYPES.map((v) => (
               <OptionCard key={v.id} title={v.label} active={form.vocalType === v.id}
@@ -650,7 +921,7 @@ function StepContent(props) {
         </div>
         {form.vocalType && form.vocalType !== "child" && (
           <div className="mb-5">
-            <div className="field-label">Stimmalter</div>
+            <div className="field-label">{t.vocalAge}</div>
             <div className="chip-row">
               {VOCAL_AGES.map((a) => (
                 <Chip key={a.id} active={form.vocalAge === a.id} onClick={() => set({ vocalAge: a.id })}>{a.label}</Chip>
@@ -659,7 +930,7 @@ function StepContent(props) {
           </div>
         )}
         <div>
-          <div className="field-label">Stimmung</div>
+          <div className="field-label">{t.mood}</div>
           <div className="chip-row">
             {MOODS.map((m) => (
               <Chip key={m} active={form.mood === m} onClick={() => set({ mood: m })}>{m}</Chip>
@@ -672,9 +943,9 @@ function StepContent(props) {
 
   if (stepKey === "fx") {
     return (
-      <StepShell title="Live & Chor" desc="Optionale Klang-Elemente für mehr Atmosphäre.">
+      <StepShell title={t.liveChoir} desc={t.liveChoirDesc}>
         <div className="mb-5">
-          <div className="field-label">Live-Effekt</div>
+          <div className="field-label">{t.liveFx}</div>
           <div className="chip-row">
             {LEVELS.map((l) => (
               <Chip key={l.id} active={form.live === l.id} onClick={() => set({ live: l.id })}>{l.label}</Chip>
@@ -682,7 +953,7 @@ function StepContent(props) {
           </div>
         </div>
         <div>
-          <div className="field-label">Chor</div>
+          <div className="field-label">{t.choir}</div>
           <div className="chip-row">
             {LEVELS.map((l) => (
               <Chip key={l.id} active={form.choir === l.id} onClick={() => set({ choir: l.id })}>{l.label}</Chip>
@@ -695,7 +966,7 @@ function StepContent(props) {
 
   if (stepKey === "idea") {
     return (
-      <StepShell title="Songidee" desc="Beschreibe deine Idee in Stichwörtern, getrennt durch Kommas.">
+      <StepShell title={t.songIdea} desc={t.songIdeaDesc}>
         <textarea
           className="textarea"
           rows={5}
@@ -709,11 +980,11 @@ function StepContent(props) {
 
   if (stepKey === "lyrics") {
     return (
-      <StepShell title="Lyrics" desc="Prüfe und bearbeite den Songtext, bevor es weitergeht.">
+      <StepShell title={t.lyrics} desc={t.lyricsDesc}>
         <textarea className="textarea mono" rows={14} value={form.lyrics} onChange={(e) => set({ lyrics: e.target.value })} />
         <div className="chip-row mt-3">
-          <Chip onClick={() => set({ lyrics: generateLyrics(form) })}>↻ Neu generieren</Chip>
-          <Chip onClick={() => set({ lyrics: form.lyrics + "\n\n(emotionaler überarbeitet)" })}>Emotionaler machen</Chip>
+          <Chip onClick={() => set({ lyrics: generateLyrics(form) })}>{t.regenerate}</Chip>
+          <Chip onClick={() => set({ lyrics: form.lyrics + "\n\n(emotionaler überarbeitet)" })}>{t.moreEmotional}</Chip>
         </div>
       </StepShell>
     );
@@ -721,13 +992,13 @@ function StepContent(props) {
 
   if (stepKey === "title") {
     return (
-      <StepShell title="Songname" desc="Wähle einen Vorschlag oder gib deinen eigenen Titel ein.">
+      <StepShell title={t.songName} desc={t.songNameDesc}>
         <div className="chip-row mb-4">
           {form.titleOptions.map((t) => (
             <Chip key={t} active={form.title === t} onClick={() => set({ title: t })}>{t}</Chip>
           ))}
         </div>
-        <input className="text-input" placeholder="Eigener Songname …" value={form.title}
+        <input className="text-input" placeholder={t.ownSongName} value={form.title}
           onChange={(e) => set({ title: e.target.value })} />
       </StepShell>
     );
@@ -735,10 +1006,10 @@ function StepContent(props) {
 
   if (stepKey === "style") {
     return (
-      <StepShell title="Music Style Prompt" desc="Automatisch erstellt aus Genre, Stimme, Stimmung und Lyrics — frei editierbar.">
+      <StepShell title={t.stylePrompt} desc={t.stylePromptDesc}>
         <textarea className="textarea mono" rows={7} value={form.stylePrompt} onChange={(e) => set({ stylePrompt: e.target.value })} />
         <div className="chip-row mt-3">
-          <Chip onClick={() => set({ stylePrompt: generateStylePrompt(form) })}>↻ Neu erstellen</Chip>
+          <Chip onClick={() => set({ stylePrompt: generateStylePrompt(form) })}>{t.recreate}</Chip>
         </div>
       </StepShell>
     );
@@ -746,7 +1017,7 @@ function StepContent(props) {
 
   if (stepKey === "music") {
     return (
-      <StepShell title="Musik" desc="Wähle deine bevorzugte Version.">
+      <StepShell title={t.music} desc={t.musicDesc}>
         <div className="flex flex-col gap-3">
           {form.versions.map((v, i) => (
             <div key={v.id} className={`version-wrap ${form.chosenVersion === i ? "version-active" : ""}`} onClick={() => set({ chosenVersion: i })}>
@@ -760,15 +1031,15 @@ function StepContent(props) {
 
   if (stepKey === "cover") {
     return (
-      <StepShell title="Cover" desc="Ein Bild für deinen Song — optional.">
+      <StepShell title={t.cover} desc={t.coverDesc}>
         <div className="grid-2 mb-4">
-          <OptionCard title="KI-Cover erstellen" desc="Passend zu Lyrics & Stimmung" icon={Sparkles}
+          <OptionCard title={t.aiCover} desc={t.aiCoverDesc} icon={Sparkles}
             active={form.coverOption === "ai"} onClick={() => props.chooseCoverOption("ai")} />
-          <OptionCard title="Eigenes Foto hochladen" desc="Aus deiner Bibliothek" icon={Upload}
+          <OptionCard title={t.uploadPhoto} desc={t.uploadPhotoDesc} icon={Upload}
             active={form.coverOption === "upload"} onClick={() => props.chooseCoverOption("upload")} />
-          <OptionCard title="Vorhandenes Bild" desc="Aus früheren Projekten" icon={ImageIcon}
+          <OptionCard title={t.existingImage} desc={t.existingImageDesc} icon={ImageIcon}
             active={form.coverOption === "existing"} onClick={() => props.chooseCoverOption("existing")} />
-          <OptionCard title="Kein Cover" desc="Song bleibt ohne Bild" icon={X}
+          <OptionCard title={t.noCover} desc={t.noCoverDesc} icon={X}
             active={form.coverOption === "none"} onClick={() => props.chooseCoverOption("none")} />
         </div>
 
@@ -790,7 +1061,7 @@ function StepContent(props) {
             ) : (
               <>
                 <Upload size={22} />
-                <span>Bild auswählen</span>
+                <span>{t.chooseImage}</span>
               </>
             )}
           </label>
@@ -811,7 +1082,7 @@ function StepContent(props) {
     const cover = form.coverOption === "ai" && form.chosenCoverIdx !== null ? form.covers[form.chosenCoverIdx]
       : form.coverOption === "existing" ? "Regen über Istanbul" : null;
     return (
-      <StepShell title="Song fertig 🎉" desc="Dein Track ist bereit — hör rein, exportiere oder starte den nächsten.">
+      <StepShell title={t.done} desc={t.doneDesc}>
         <div className="done-card">
           {form.coverOption === "upload" && form.uploadedImg ? (
             <img src={form.uploadedImg} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 12 }} />
@@ -827,16 +1098,16 @@ function StepContent(props) {
 
         {!props.videoOpen ? (
           <button className="btn-primary mt-4" onClick={() => props.setVideoOpen(true)}>
-            <Video size={16} /> Video erstellen
+            <Video size={16} /> {t.createVideo}
           </button>
         ) : (
           <div className="video-panel">
-            <div className="field-label">Format</div>
+            <div className="field-label">{t.format}</div>
             <div className="chip-row mb-3">
               <Chip active={props.videoFormat === "16:9"} onClick={() => props.setVideoFormat("16:9")}>16:9 · YouTube</Chip>
               <Chip active={props.videoFormat === "9:16"} onClick={() => props.setVideoFormat("9:16")}>9:16 · Shorts/TikTok</Chip>
             </div>
-            <div className="field-label">Effekt</div>
+            <div className="field-label">{t.effect}</div>
             <div className="chip-row mb-4">
               {VIDEO_EFFECTS.map((fx) => (
                 <Chip key={fx} active={props.videoFx === fx} onClick={() => props.setVideoFx(fx)}>{fx}</Chip>
@@ -844,23 +1115,23 @@ function StepContent(props) {
             </div>
 
             {props.videoState === "idle" && (
-              <button className="btn-primary" onClick={props.renderVideo}><Video size={16} /> Rendern (−8 Credits)</button>
+              <button className="btn-primary" onClick={props.renderVideo}><Video size={16} /> {t.render}</button>
             )}
             {props.videoState === "rendering" && (
-              <div className="generating small"><Eq size={7} /><p className="mt-2">Video wird gerendert …</p></div>
+              <div className="generating small"><Eq size={7} /><p className="mt-2">{t.rendering}</p></div>
             )}
             {props.videoState === "ready" && (
               <div className="ready-box">
-                <Check size={16} /> Video bereit — {props.videoFormat} · {props.videoFx}
-                <button className="btn-ghost ml-auto" disabled title="Demo – kein echter Export"><Download size={14} /> Export</button>
+                <Check size={16} /> {t.videoReady} — {props.videoFormat} · {props.videoFx}
+                <button className="btn-ghost ml-auto" disabled title="Demo – kein echter Export"><Download size={14} /> {t.export}</button>
               </div>
             )}
           </div>
         )}
 
         <div className="flex gap-3 mt-6">
-          <button className="btn-ghost" onClick={props.restart}><RotateCcw size={14} /> Neuen Song erstellen</button>
-          <button className="btn-ghost" onClick={props.goDashboard}>Zum Dashboard</button>
+          <button className="btn-ghost" onClick={props.restart}><RotateCcw size={14} /> {t.restart}</button>
+          <button className="btn-ghost" onClick={props.goDashboard}>{t.dashboard}</button>
         </div>
       </StepShell>
     );
@@ -930,12 +1201,16 @@ function GlobalStyle() {
 
       .header { display:flex; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--ink-3); backdrop-filter:blur(6px); }
       .header-right { display:flex; align-items:center; gap:12px; }
+      .lang-switch { display:flex; gap:4px; padding:3px; border:1px solid var(--ink-3); background:var(--ink-2); border-radius:999px; }
+      .lang-btn { border:0; background:transparent; color:var(--paper-dim); font-size:11px; font-weight:700; padding:5px 8px; border-radius:999px; cursor:pointer; }
+      .lang-btn:hover { color:var(--paper); }
+      .lang-btn-active { background:var(--amber); color:var(--ink); }
       .credits-pill { display:flex; align-items:center; gap:6px; background:var(--ink-2); padding:6px 12px; border-radius:20px; color:var(--amber); border:1px solid var(--ink-3); box-shadow:inset 0 1px 0 rgba(255,255,255,0.03); }
       .avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg, var(--rose), #a8443c); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; box-shadow:0 4px 12px -4px rgba(196,83,74,0.6); }
 
       .landing { position:relative; padding:24px; min-height:600px; display:flex; flex-direction:column; }
       .landing-glow { position:absolute; top:-120px; right:-80px; width:420px; height:420px; border-radius:50%; background:radial-gradient(circle, rgba(227,165,66,0.16), transparent 70%); pointer-events:none; }
-      .landing-top { display:flex; }
+      .landing-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
       .landing-body { flex:1; display:flex; align-items:center; gap:32px; padding:20px 12px 40px; flex-wrap:wrap; }
       .landing-hero { flex:1; min-width:320px; display:flex; flex-direction:column; justify-content:center; max-width:520px; }
       .eyebrow { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--amber); letter-spacing:0.04em; margin-bottom:18px; }
@@ -1050,6 +1325,312 @@ function GlobalStyle() {
 
       .video-panel { background:var(--ink-3); border-radius:12px; padding:18px; margin-top:14px; animation: stepIn 0.3s ease both; }
       .ready-box { display:flex; align-items:center; gap:8px; background:rgba(78,140,130,0.15); border:1px solid var(--teal); color:var(--paper); padding:12px 14px; border-radius:10px; font-size:13px; box-shadow:0 8px 20px -12px rgba(78,140,130,0.5); }
+
+
+      /* --------------------------- RESPONSIVE / MOBILE --------------------------- */
+      @media (max-width: 900px) {
+        .songora-root {
+          min-height: 100vh;
+          border-radius: 0;
+        }
+
+        .landing {
+          min-height: 100vh;
+          padding: 18px;
+        }
+
+        .landing-body {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 24px 0 20px;
+          gap: 36px;
+        }
+
+        .landing-hero {
+          min-width: 0;
+          max-width: none;
+        }
+
+        .landing-hero h1 {
+          font-size: clamp(38px, 10vw, 52px);
+        }
+
+        .landing-visual {
+          min-width: 0;
+          width: 100%;
+        }
+
+        .header {
+          padding: 14px 16px;
+        }
+
+        .page {
+          padding: 22px 18px;
+        }
+
+        .wizard {
+          flex-direction: column;
+          overflow: visible;
+        }
+
+        .rail {
+          width: 100%;
+          border-right: 0;
+          border-bottom: 1px solid var(--ink-3);
+          padding: 10px 12px;
+          flex-direction: row;
+          gap: 8px;
+          overflow-x: auto;
+          overflow-y: hidden;
+          scrollbar-width: thin;
+          position: sticky;
+          top: 0;
+          background: rgba(20, 24, 26, 0.96);
+          backdrop-filter: blur(10px);
+          z-index: 20;
+        }
+
+        .rail-item {
+          flex: 0 0 auto;
+          padding: 8px 10px;
+          min-width: max-content;
+        }
+
+        .rail-item:not(:last-child)::before {
+          display: none;
+        }
+
+        .rail-label {
+          font-size: 12px;
+        }
+
+        .wizard-main {
+          padding: 18px;
+          overflow: visible;
+        }
+
+        .wizard-panel {
+          padding: 20px;
+        }
+
+        .grid-4 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 640px) {
+        .landing {
+          padding: 16px;
+        }
+
+        .landing-top {
+          padding-bottom: 6px;
+        }
+
+        .landing-body {
+          justify-content: flex-start;
+          gap: 28px;
+        }
+
+        .landing-hero h1 {
+          font-size: clamp(36px, 12vw, 46px);
+          line-height: 1.02;
+          margin-bottom: 16px;
+        }
+
+        .landing-hero p {
+          font-size: 15px;
+          margin-bottom: 22px;
+        }
+
+        .landing-stats {
+          gap: 14px;
+          margin-top: 24px;
+          flex-wrap: wrap;
+        }
+
+        .landing-stats > div {
+          min-width: calc(50% - 8px);
+        }
+
+        .vinyl {
+          width: 160px;
+          height: 160px;
+        }
+
+        .landing-bars {
+          width: 100%;
+          justify-content: center;
+          overflow: hidden;
+        }
+
+        .header {
+          padding: 12px 14px;
+        }
+
+        .header .lang-switch { display:none; }
+
+        .brand {
+          font-size: 17px;
+        }
+
+        .credits-pill {
+          padding: 5px 9px;
+        }
+
+        .avatar {
+          width: 28px;
+          height: 28px;
+        }
+
+        .page {
+          padding: 18px 14px;
+        }
+
+        .page-title {
+          font-size: 24px;
+        }
+
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+          grid-template-columns: 1fr;
+        }
+
+        .new-song-card,
+        .project-card,
+        .opt-card {
+          padding: 13px;
+        }
+
+        .rail {
+          padding: 8px 10px;
+        }
+
+        .rail-item {
+          padding: 7px 9px;
+        }
+
+        .rail-label {
+          display: none;
+        }
+
+        .wizard-main {
+          padding: 14px;
+        }
+
+        .wizard-panel {
+          padding: 16px;
+          border-radius: 12px;
+        }
+
+        .step-title {
+          font-size: 21px;
+        }
+
+        .wizard-nav {
+          gap: 10px;
+          position: sticky;
+          bottom: 0;
+          padding: 12px 0 4px;
+          background: linear-gradient(to top, var(--ink) 75%, transparent);
+          z-index: 10;
+        }
+
+        .wizard-nav .btn-ghost,
+        .wizard-nav .btn-primary {
+          flex: 1;
+          min-height: 44px;
+        }
+
+        .chip-row {
+          gap: 7px;
+        }
+
+        .chip {
+          padding: 8px 12px;
+        }
+
+        .textarea,
+        .text-input {
+          font-size: 16px;
+          padding: 13px;
+        }
+
+        .done-card {
+          align-items: flex-start;
+        }
+
+        .video-panel {
+          padding: 14px;
+        }
+
+        .ready-box {
+          flex-wrap: wrap;
+        }
+
+        .ready-box .ml-auto {
+          margin-left: 0;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .flex.gap-3.mt-6 {
+          flex-direction: column;
+        }
+
+        .flex.gap-3.mt-6 .btn-ghost {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .landing-stats {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .landing-stats > div {
+          min-width: 100%;
+        }
+
+        .landing-hero h1 {
+          font-size: 34px;
+        }
+
+        .btn-lg {
+          width: 100%;
+        }
+
+        .header-right {
+          gap: 8px;
+        }
+
+        .credits-pill .label-mono {
+          font-size: 11px;
+        }
+
+        .wizard-main {
+          padding: 10px;
+        }
+
+        .wizard-panel {
+          padding: 14px;
+        }
+
+        .step-title {
+          font-size: 20px;
+        }
+
+        .opt-card {
+          min-height: 64px;
+        }
+
+        .chip {
+          font-size: 12px;
+        }
+      }
     `}</style>
   );
 }
