@@ -1,0 +1,1055 @@
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Music2, Sparkles, Play, Pause, Image as ImageIcon, Video, Users, Heart,
+  ChevronRight, ChevronLeft, Loader2, Upload, Wand2, Disc3, Zap, Check,
+  Mic, Globe2, Clock3, Radio, Music, X, ArrowRight, RotateCcw, Download,
+} from "lucide-react";
+
+/* ---------------------------------- DATA ---------------------------------- */
+
+const GENRES = [
+  { id: "arabesk", label: "Arabesk", desc: "Melancholisch, dramatisch, orientalisch" },
+  { id: "pop", label: "Pop", desc: "Modern, eingängig, radiotauglich" },
+  { id: "rock", label: "Rock", desc: "Kraftvoll, gitarrenlastig, energisch" },
+  { id: "rap", label: "Rap", desc: "Rhythmisch, textbetont, urban" },
+  { id: "kinderlied", label: "Kinderlied", desc: "Freundlich, verspielt, einfach" },
+];
+
+const LANGUAGES = ["Türkisch", "Deutsch", "Englisch", "Arabisch", "Französisch"];
+const DECADES = ["1970er", "1980er", "1990er", "2000er"];
+
+const VOCAL_TYPES = [
+  { id: "male", label: "Männerstimme", icon: Mic },
+  { id: "female", label: "Frauenstimme", icon: Mic },
+  { id: "child", label: "Kinderstimme", icon: Mic },
+];
+const VOCAL_AGES = [
+  { id: "young", label: "Junge Stimme" },
+  { id: "mature", label: "Reife Stimme" },
+];
+
+const MOODS = ["Traurig", "Melancholisch", "Romantisch", "Fröhlich", "Dramatisch", "Nostalgisch", "Hoffnungsvoll", "Energiegeladen"];
+const LEVELS = [
+  { id: "off", label: "Aus" },
+  { id: "light", label: "Leicht" },
+  { id: "strong", label: "Stark" },
+];
+
+const INSTRUMENTS = {
+  arabesk: ["Oud", "Qanun", "Bağlama", "Streicher", "analoge Bandwärme"],
+  pop: ["Synth-Pads", "Pop-Drums", "helle Gitarren", "Claps"],
+  rock: ["E-Gitarren", "Live-Drums", "Bass", "Orgel"],
+  rap: ["808-Bass", "Hi-Hats", "Trap-Drums", "Vinyl-Knistern"],
+  kinderlied: ["Glockenspiel", "Ukulele", "verspieltes Klavier", "Xylophon"],
+};
+
+const BPM = {
+  Traurig: 74, Melancholisch: 78, Romantisch: 92, Fröhlich: 124,
+  Dramatisch: 84, Nostalgisch: 96, Hoffnungsvoll: 102, Energiegeladen: 138,
+};
+
+const VIDEO_EFFECTS = ["Ken-Burns", "Kamerabewegung", "Audio-Visualizer", "Waveform", "Partikel", "Glow"];
+
+/* ------------------------------- GENERATORS -------------------------------- */
+
+function hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+function generateLyrics(f) {
+  const kws = f.idea.split(",").map((k) => k.trim()).filter(Boolean);
+  const k = (i) => kws[i % Math.max(kws.length, 1)] || "diese Nacht";
+  const moodLine = {
+    Traurig: "und niemand hört, wie leise ich zerbrech'",
+    Melancholisch: "die Farben blassen, während ich noch geh'",
+    Romantisch: "dein Name bleibt das Einzige, das zählt",
+    Fröhlich: "und jeder Schritt fühlt sich wie Fliegen an",
+    Dramatisch: "der Himmel bricht, doch ich steh' weiter hier",
+    Nostalgisch: "ich seh' uns beide noch von damals steh'n",
+    Hoffnungsvoll: "und irgendwo wartet ein neuer Tag",
+    Energiegeladen: "wir geben alles, keine Sekunde bleibt zurück",
+  }[f.mood] || "und diese Zeile trägt, was ich nicht sag'";
+
+  const lines = [
+    "[Intro]",
+    `${k(0)} — nur ein Wort, und schon bin ich zurück`,
+    "",
+    "[Verse 1]",
+    `Ich lauf' durch ${k(0)}, denk' an ${k(1)}`,
+    `Die Zeit steht still bei ${k(2)}, ganz allein`,
+    moodLine,
+    "so wie es war, so wird es nie mehr sein",
+    "",
+    "[Pre-Chorus]",
+    "Und jedes Mal, wenn ich die Augen schließ'",
+    `kommt ${k(0)} zurück, so unverhofft, so nah`,
+    "",
+    "[Chorus]",
+    `${f.title || "Dieser Song"} ist alles, was mir bleibt`,
+    `${k(1)}, du warst mein Anfang und mein Ziel`,
+    moodLine,
+    "und ich sing' es, bis der letzte Ton verklingt",
+    "",
+    "[Verse 2]",
+    `Man sagt, die Zeit heilt Wunden — ${k(2)} weiß es besser`,
+    "ich trag' das Bild von uns noch immer bei mir",
+    "",
+    "[Chorus]",
+    `${f.title || "Dieser Song"} ist alles, was mir bleibt`,
+    `${k(1)}, du warst mein Anfang und mein Ziel`,
+    "",
+    "[Bridge]",
+    "Und wenn die letzte Strophe verklingt,",
+    `bleibt nur ${k(0)} — und die Stille danach`,
+    "",
+    "[Final Chorus]",
+    `${f.title || "Dieser Song"} ist alles, was mir bleibt`,
+    `${k(1)}, du warst mein Anfang und mein Ziel`,
+    moodLine,
+    "",
+    "[Outro]",
+    `${k(0)}... ${k(0)}...`,
+  ];
+  return lines.join("\n");
+}
+
+function generateTitles(f) {
+  const kws = f.idea.split(",").map((k) => k.trim()).filter(Boolean);
+  const w1 = kws[0] || "Erinnerung";
+  const w2 = kws[1] || "Regen";
+  return [
+    `${w1} in ${w2}`,
+    `${f.mood || "Ohne"} dich`,
+    `Zurück nach ${w1}`,
+    `Das letzte ${w2}`,
+  ];
+}
+
+function generateStylePrompt(f) {
+  const decades = f.decades.length ? f.decades.join("–") : "zeitgenössisch";
+  const instruments = (INSTRUMENTS[f.genre] || []).join(", ");
+  const bpm = BPM[f.mood] || 100;
+  const vocal = `${f.vocalType === "child" ? "Kinderstimme" : f.vocalAge === "young" ? "junge" : "reife"} ${
+    f.vocalType === "male" ? "Männerstimme" : f.vocalType === "female" ? "Frauenstimme" : ""
+  }`.trim();
+  const live = f.live !== "off" ? `, ${f.live === "strong" ? "starke Live-Konzertatmosphäre" : "leichter Live-Charakter"}` : "";
+  const choir = f.choir !== "off" ? `, ${f.choir === "strong" ? "kraftvoller Background-Chor im Final Chorus" : "leichter Background-Chor im Chorus"}` : "";
+  return `${decades} ${f.genre ? GENRES.find((g) => g.id === f.genre)?.label : ""}, ${vocal}, ${(f.mood || "emotional").toLowerCase()}, ${instruments}, langsames bis mittleres Tempo (${bpm} BPM), tiefer Reverb, ${f.language || "internationale"} Vocals, cinematisches Arrangement, ausdrucksstarker Gesang, emotionaler Refrain${live}${choir}.`;
+}
+
+function generateVersions(f) {
+  return [1, 2, 3].map((n) => ({
+    id: n,
+    label: `Version ${n}`,
+    duration: 150 + hashStr(f.title + n) % 60,
+    bpm: (BPM[f.mood] || 100) + (n - 2) * 2,
+    key: ["A-Moll", "D-Moll", "G-Moll"][n - 1],
+    wave: Array.from({ length: 64 }, (_, i) => {
+      const seed = hashStr(f.title + n + i);
+      return 0.15 + (seed % 100) / 100 * 0.85;
+    }),
+  }));
+}
+
+function coverPalette(seedStr) {
+  const h = hashStr(seedStr);
+  const h1 = h % 360;
+  const h2 = (h1 + 40 + (h % 60)) % 360;
+  const h3 = (h1 + 200) % 360;
+  return { h1, h2, h3 };
+}
+
+/* -------------------------------- UI ATOMS --------------------------------- */
+
+function Eq({ size = 5 }) {
+  return (
+    <div className="flex items-end gap-1" style={{ height: size * 4 }}>
+      {[0, 1, 2, 3, 4].map((i) => (
+        <div key={i} className="eq-bar" style={{ animationDelay: `${i * 0.12}s`, width: size / 2 }} />
+      ))}
+    </div>
+  );
+}
+
+function CoverArt({ seed, size = 100, rounded = 14 }) {
+  const { h1, h2, h3 } = coverPalette(seed || "songora");
+  const h = hashStr(seed || "songora");
+  const shapes = h % 3;
+  return (
+    <div
+      style={{
+        width: size, height: size, borderRadius: rounded,
+        background: `linear-gradient(135deg, hsl(${h1} 55% 30%), hsl(${h2} 60% 38%))`,
+        position: "relative", overflow: "hidden", flexShrink: 0,
+      }}
+    >
+      <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ position: "absolute", inset: 0 }}>
+        {shapes === 0 && (
+          <>
+            <circle cx="70" cy="30" r="34" fill={`hsl(${h3} 70% 55%)`} opacity="0.35" />
+            <circle cx="25" cy="80" r="22" fill={`hsl(${h1} 70% 65%)`} opacity="0.3" />
+          </>
+        )}
+        {shapes === 1 && (
+          <>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <line key={i} x1="0" y1={20 * i} x2="100" y2={20 * i + 10} stroke={`hsl(${h3} 60% 60%)`} strokeWidth="2" opacity="0.25" />
+            ))}
+          </>
+        )}
+        {shapes === 2 && (
+          <>
+            <rect x="10" y="10" width="35" height="35" fill={`hsl(${h3} 60% 55%)`} opacity="0.3" transform="rotate(20 27 27)" />
+            <rect x="55" y="55" width="45" height="45" fill={`hsl(${h1} 70% 60%)`} opacity="0.25" transform="rotate(-15 77 77)" />
+          </>
+        )}
+      </svg>
+    </div>
+  );
+}
+
+function Player({ version, compact }) {
+  const [playing, setPlaying] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (playing) {
+      ref.current = setInterval(() => {
+        setElapsed((e) => {
+          if (e >= version.duration) {
+            setPlaying(false);
+            return 0;
+          }
+          return e + 2;
+        });
+      }, 260);
+    }
+    return () => clearInterval(ref.current);
+  }, [playing, version.duration]);
+
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const frac = elapsed / version.duration;
+
+  return (
+    <div className="panel" style={{ padding: compact ? 12 : 16 }}>
+      <div className="flex items-center gap-3">
+        <button className="play-btn" onClick={() => setPlaying((p) => !p)}>
+          {playing ? <Pause size={compact ? 16 : 18} /> : <Play size={compact ? 16 : 18} style={{ marginLeft: 2 }} />}
+        </button>
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="label-mono">{version.label}</span>
+            <span className="label-mono muted">{fmt(elapsed)} / {fmt(version.duration)}</span>
+          </div>
+          <div className="flex items-end gap-[2px]" style={{ height: compact ? 24 : 32 }}>
+            {version.wave.map((h, i) => (
+              <div
+                key={i}
+                className="wave-bar"
+                style={{
+                  height: `${h * 100}%`,
+                  background: i / version.wave.length <= frac ? "var(--amber)" : "rgba(244,240,232,0.18)",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+      {!compact && (
+        <div className="flex gap-4 mt-2 label-mono muted">
+          <span>{version.bpm} BPM</span>
+          <span>{version.key}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OptionCard({ active, onClick, title, desc, icon: Icon }) {
+  return (
+    <button className={`opt-card ${active ? "opt-card-active" : ""}`} onClick={onClick}>
+      {Icon && <Icon size={18} className="opt-icon" />}
+      <div>
+        <div className="opt-title">{title}</div>
+        {desc && <div className="opt-desc">{desc}</div>}
+      </div>
+      {active && <Check size={16} className="opt-check" />}
+    </button>
+  );
+}
+
+function Chip({ active, onClick, children }) {
+  return (
+    <button className={`chip ${active ? "chip-active" : ""}`} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
+/* --------------------------------- STEPS ----------------------------------- */
+
+const STEPS = [
+  { key: "genre", label: "Musikrichtung", icon: Music2 },
+  { key: "lang", label: "Sprache & Epoche", icon: Globe2 },
+  { key: "voice", label: "Stimme & Stimmung", icon: Mic },
+  { key: "fx", label: "Live & Chor", icon: Users },
+  { key: "idea", label: "Songidee", icon: Sparkles },
+  { key: "lyrics", label: "Lyrics", icon: Wand2 },
+  { key: "title", label: "Songname", icon: Disc3 },
+  { key: "style", label: "Style Prompt", icon: Radio },
+  { key: "music", label: "Musik", icon: Music },
+  { key: "cover", label: "Cover", icon: ImageIcon },
+  { key: "done", label: "Fertig", icon: Check },
+];
+
+function StepRail({ step, form }) {
+  return (
+    <div className="rail">
+      {STEPS.map((s, i) => {
+        const Icon = s.icon;
+        const state = i < step ? "done" : i === step ? "active" : "todo";
+        return (
+          <div key={s.key} className={`rail-item rail-${state}`}>
+            <div className="rail-num">{state === "done" ? <Check size={12} /> : i + 1}</div>
+            <span className="rail-label">{s.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* --------------------------------- APP -------------------------------------- */
+
+const emptyForm = {
+  genre: null, language: null, decades: [], vocalType: null, vocalAge: null,
+  mood: null, live: "off", choir: "off", idea: "",
+  lyrics: "", titleOptions: [], title: "", stylePrompt: "",
+  versions: [], chosenVersion: null,
+  coverOption: null, covers: [], chosenCoverIdx: null, uploadedImg: null,
+};
+
+export default function SongoraApp() {
+  const [view, setView] = useState("landing");
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState(emptyForm);
+  const [credits, setCredits] = useState(128);
+  const [generating, setGenerating] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
+  const [videoState, setVideoState] = useState("idle"); // idle, rendering, ready
+  const [videoFormat, setVideoFormat] = useState("16:9");
+  const [videoFx, setVideoFx] = useState("Ken-Burns");
+
+  const set = (patch) => setForm((f) => ({ ...f, ...patch }));
+
+  const startWizard = () => {
+    setForm(emptyForm);
+    setStep(0);
+    setVideoOpen(false);
+    setVideoState("idle");
+    setView("wizard");
+  };
+
+  const canContinue = () => {
+    const key = STEPS[step].key;
+    if (key === "genre") return !!form.genre;
+    if (key === "lang") return !!form.language && form.decades.length > 0;
+    if (key === "voice") return !!form.vocalType && (form.vocalType === "child" || !!form.vocalAge) && !!form.mood;
+    if (key === "idea") return form.idea.trim().length > 3;
+    if (key === "title") return !!form.title;
+    if (key === "cover") return form.coverOption === "none" || form.coverOption === "existing" ||
+      (form.coverOption === "ai" && form.chosenCoverIdx !== null) ||
+      (form.coverOption === "upload" && !!form.uploadedImg);
+    return true;
+  };
+
+  const next = () => {
+    const key = STEPS[step].key;
+
+    if (key === "idea") {
+      setGenerating(true);
+      setTimeout(() => {
+        set({ lyrics: generateLyrics(form) });
+        setGenerating(false);
+        setStep((s) => s + 1);
+      }, 1600);
+      return;
+    }
+    if (key === "lyrics" && form.titleOptions.length === 0) {
+      set({ titleOptions: generateTitles(form) });
+    }
+    if (key === "title" && !form.stylePrompt) {
+      set({ stylePrompt: generateStylePrompt({ ...form }) });
+    }
+    if (key === "style") {
+      setGenerating(true);
+      setTimeout(() => {
+        setCredits((c) => c - 10);
+        set({ versions: generateVersions(form) });
+        setGenerating(false);
+        setStep((s) => s + 1);
+      }, 2000);
+      return;
+    }
+    if (key === "music" && form.chosenVersion === null) {
+      set({ chosenVersion: 0 });
+    }
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
+
+  const back = () => setStep((s) => Math.max(0, s - 1));
+
+  const chooseCoverOption = (opt) => {
+    set({ coverOption: opt });
+    if (opt === "ai") {
+      setGenerating(true);
+      setTimeout(() => {
+        setCredits((c) => c - 4);
+        const covers = Array.from({ length: 4 }, (_, i) => `${form.title}-cover-${i}`);
+        set({ covers, chosenCoverIdx: null });
+        setGenerating(false);
+      }, 1400);
+    }
+  };
+
+  const onUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => set({ uploadedImg: ev.target.result });
+    reader.readAsDataURL(file);
+  };
+
+  const renderVideo = () => {
+    setVideoState("rendering");
+    setCredits((c) => c - 8);
+    setTimeout(() => setVideoState("ready"), 2200);
+  };
+
+  /* ----------------------------- LANDING VIEW ------------------------------ */
+
+  if (view === "landing") {
+    return (
+      <div className="songora-root">
+        <GlobalStyle />
+        <div className="landing">
+          <div className="landing-glow" />
+          <div className="landing-top">
+            <div className="brand"><Disc3 size={20} /> songora<span className="brand-dot">.ai</span></div>
+          </div>
+          <div className="landing-body">
+            <div className="landing-hero">
+              <div className="eyebrow">Idee <span className="dot">·</span> Lyrics <span className="dot">·</span> Musik <span className="dot">·</span> Cover <span className="dot">·</span> Video</div>
+              <h1>Von der Idee<br /><em>zum fertigen</em> Song.</h1>
+              <p>Wähle Stil, Sprache und Stimmung — songora.ai schreibt Lyrics, komponiert den Style-Prompt und produziert deinen Track in Minuten.</p>
+              <button className="btn-primary btn-lg" onClick={() => setView("dashboard")}>
+                Demo starten <ArrowRight size={16} />
+              </button>
+              <div className="landing-stats">
+                <div><span className="stat-num">4,2 Min</span><span className="stat-label">ø Produktionszeit</span></div>
+                <div><span className="stat-num">5</span><span className="stat-label">Genres</span></div>
+                <div><span className="stat-num">3–5 €</span><span className="stat-label">pro Song</span></div>
+              </div>
+            </div>
+            <div className="landing-visual">
+              <div className="vinyl">
+                <div className="vinyl-grooves" />
+                <div className="vinyl-label"><Disc3 size={26} /></div>
+                <div className="vinyl-arm" />
+              </div>
+              <div className="landing-bars">
+                {Array.from({ length: 28 }).map((_, i) => (
+                  <div key={i} className="eq-bar landing-bar" style={{ animationDelay: `${(i % 8) * 0.11}s`, width: 4 }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------------------------- DASHBOARD VIEW ----------------------------- */
+
+  if (view === "dashboard") {
+    return (
+      <div className="songora-root">
+        <GlobalStyle />
+        <Header credits={credits} onLogo={() => setView("dashboard")} />
+        <div className="page">
+          <h2 className="page-title">Willkommen zurück</h2>
+          <p className="muted mb-6">Erstelle einen neuen Song oder mach bei einem Projekt weiter.</p>
+
+          <button className="new-song-card" onClick={startWizard}>
+            <div className="new-song-icon"><Sparkles size={22} /></div>
+            <div>
+              <div className="opt-title">Neuen Song erstellen</div>
+              <div className="opt-desc">Genre wählen → Lyrics → Musik → Cover → Video</div>
+            </div>
+            <ChevronRight size={18} style={{ marginLeft: "auto" }} />
+          </button>
+
+          <h3 className="section-title">Deine Projekte</h3>
+          <div className="grid-2">
+            {[
+              { title: "Regen über Istanbul", genre: "Arabesk", mood: "Melancholisch" },
+              { title: "Sommerlicht", genre: "Pop", mood: "Fröhlich" },
+            ].map((p, i) => (
+              <div key={i} className="project-card">
+                <CoverArt seed={p.title} size={56} rounded={10} />
+                <div>
+                  <div className="opt-title">{p.title}</div>
+                  <div className="opt-desc">{p.genre} · {p.mood}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ------------------------------ WIZARD VIEW ------------------------------ */
+
+  const key = STEPS[step].key;
+
+  return (
+    <div className="songora-root">
+      <GlobalStyle />
+      <Header credits={credits} onLogo={() => setView("dashboard")} />
+      <div className="wizard">
+        <StepRail step={step} form={form} />
+        <div className="wizard-main">
+          <div className="panel wizard-panel">
+            {generating ? (
+              <GeneratingState step={key} />
+            ) : (
+              <div className="step-enter" key={key}>
+              <StepContent
+                stepKey={key}
+                form={form}
+                set={set}
+                onUpload={onUpload}
+                chooseCoverOption={chooseCoverOption}
+                videoOpen={videoOpen}
+                setVideoOpen={setVideoOpen}
+                videoState={videoState}
+                renderVideo={renderVideo}
+                videoFormat={videoFormat}
+                setVideoFormat={setVideoFormat}
+                videoFx={videoFx}
+                setVideoFx={setVideoFx}
+                restart={startWizard}
+                goDashboard={() => setView("dashboard")}
+              />
+              </div>
+            )}
+          </div>
+
+          {key !== "done" && !generating && (
+            <div className="wizard-nav">
+              <button className="btn-ghost" onClick={back} disabled={step === 0}>
+                <ChevronLeft size={16} /> Zurück
+              </button>
+              <button className="btn-primary" onClick={next} disabled={!canContinue()}>
+                Weiter <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ----------------------------- SUBCOMPONENTS -------------------------------- */
+
+function Header({ credits, onLogo }) {
+  return (
+    <div className="header">
+      <div className="brand" onClick={onLogo} style={{ cursor: "pointer" }}>
+        <Disc3 size={18} /> songora<span className="brand-dot">.ai</span>
+      </div>
+      <div className="header-right">
+        <div className="credits-pill"><Zap size={13} /> <span className="label-mono">{credits}</span></div>
+        <div className="avatar">S</div>
+      </div>
+    </div>
+  );
+}
+
+function GeneratingState({ step }) {
+  const messages = {
+    idea: "ChatGPT schreibt deine Lyrics …",
+    style: "Musik wird produziert …",
+  };
+  return (
+    <div className="generating">
+      <Eq size={10} />
+      <p className="mt-4">{messages[step] || "Wird generiert …"}</p>
+    </div>
+  );
+}
+
+function StepContent(props) {
+  const { stepKey, form, set } = props;
+
+  if (stepKey === "genre") {
+    return (
+      <StepShell title="Musikrichtung" desc="Wähle den Stil, der zu deinem Song passt.">
+        <div className="grid-2">
+          {GENRES.map((g) => (
+            <OptionCard key={g.id} title={g.label} desc={g.desc} active={form.genre === g.id}
+              onClick={() => set({ genre: g.id })} icon={Music2} />
+          ))}
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "lang") {
+    return (
+      <StepShell title="Sprache & Epoche" desc="In welcher Sprache und welchem Klang-Jahrzehnt soll der Song entstehen?">
+        <div className="mb-5">
+          <div className="field-label">Sprache</div>
+          <div className="chip-row">
+            {LANGUAGES.map((l) => (
+              <Chip key={l} active={form.language === l} onClick={() => set({ language: l })}>{l}</Chip>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="field-label">Epoche (Mehrfachauswahl möglich)</div>
+          <div className="chip-row">
+            {DECADES.map((d) => (
+              <Chip key={d} active={form.decades.includes(d)}
+                onClick={() => set({ decades: form.decades.includes(d) ? form.decades.filter((x) => x !== d) : [...form.decades, d] })}>
+                {d}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "voice") {
+    return (
+      <StepShell title="Stimme & Stimmung" desc="Wer singt, und welche Emotion soll mitschwingen?">
+        <div className="mb-5">
+          <div className="field-label">Stimme</div>
+          <div className="grid-3">
+            {VOCAL_TYPES.map((v) => (
+              <OptionCard key={v.id} title={v.label} active={form.vocalType === v.id}
+                onClick={() => set({ vocalType: v.id, vocalAge: v.id === "child" ? "kind" : form.vocalAge })} icon={v.icon} />
+            ))}
+          </div>
+        </div>
+        {form.vocalType && form.vocalType !== "child" && (
+          <div className="mb-5">
+            <div className="field-label">Stimmalter</div>
+            <div className="chip-row">
+              {VOCAL_AGES.map((a) => (
+                <Chip key={a.id} active={form.vocalAge === a.id} onClick={() => set({ vocalAge: a.id })}>{a.label}</Chip>
+              ))}
+            </div>
+          </div>
+        )}
+        <div>
+          <div className="field-label">Stimmung</div>
+          <div className="chip-row">
+            {MOODS.map((m) => (
+              <Chip key={m} active={form.mood === m} onClick={() => set({ mood: m })}>{m}</Chip>
+            ))}
+          </div>
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "fx") {
+    return (
+      <StepShell title="Live & Chor" desc="Optionale Klang-Elemente für mehr Atmosphäre.">
+        <div className="mb-5">
+          <div className="field-label">Live-Effekt</div>
+          <div className="chip-row">
+            {LEVELS.map((l) => (
+              <Chip key={l.id} active={form.live === l.id} onClick={() => set({ live: l.id })}>{l.label}</Chip>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div className="field-label">Chor</div>
+          <div className="chip-row">
+            {LEVELS.map((l) => (
+              <Chip key={l.id} active={form.choir === l.id} onClick={() => set({ choir: l.id })}>{l.label}</Chip>
+            ))}
+          </div>
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "idea") {
+    return (
+      <StepShell title="Songidee" desc="Beschreibe deine Idee in Stichwörtern, getrennt durch Kommas.">
+        <textarea
+          className="textarea"
+          rows={5}
+          placeholder="z. B. verlorene Liebe, Istanbul, Regen, nach 20 Jahren denke ich noch an sie"
+          value={form.idea}
+          onChange={(e) => set({ idea: e.target.value })}
+        />
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "lyrics") {
+    return (
+      <StepShell title="Lyrics" desc="Prüfe und bearbeite den Songtext, bevor es weitergeht.">
+        <textarea className="textarea mono" rows={14} value={form.lyrics} onChange={(e) => set({ lyrics: e.target.value })} />
+        <div className="chip-row mt-3">
+          <Chip onClick={() => set({ lyrics: generateLyrics(form) })}>↻ Neu generieren</Chip>
+          <Chip onClick={() => set({ lyrics: form.lyrics + "\n\n(emotionaler überarbeitet)" })}>Emotionaler machen</Chip>
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "title") {
+    return (
+      <StepShell title="Songname" desc="Wähle einen Vorschlag oder gib deinen eigenen Titel ein.">
+        <div className="chip-row mb-4">
+          {form.titleOptions.map((t) => (
+            <Chip key={t} active={form.title === t} onClick={() => set({ title: t })}>{t}</Chip>
+          ))}
+        </div>
+        <input className="text-input" placeholder="Eigener Songname …" value={form.title}
+          onChange={(e) => set({ title: e.target.value })} />
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "style") {
+    return (
+      <StepShell title="Music Style Prompt" desc="Automatisch erstellt aus Genre, Stimme, Stimmung und Lyrics — frei editierbar.">
+        <textarea className="textarea mono" rows={7} value={form.stylePrompt} onChange={(e) => set({ stylePrompt: e.target.value })} />
+        <div className="chip-row mt-3">
+          <Chip onClick={() => set({ stylePrompt: generateStylePrompt(form) })}>↻ Neu erstellen</Chip>
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "music") {
+    return (
+      <StepShell title="Musik" desc="Wähle deine bevorzugte Version.">
+        <div className="flex flex-col gap-3">
+          {form.versions.map((v, i) => (
+            <div key={v.id} className={`version-wrap ${form.chosenVersion === i ? "version-active" : ""}`} onClick={() => set({ chosenVersion: i })}>
+              <Player version={v} />
+            </div>
+          ))}
+        </div>
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "cover") {
+    return (
+      <StepShell title="Cover" desc="Ein Bild für deinen Song — optional.">
+        <div className="grid-2 mb-4">
+          <OptionCard title="KI-Cover erstellen" desc="Passend zu Lyrics & Stimmung" icon={Sparkles}
+            active={form.coverOption === "ai"} onClick={() => props.chooseCoverOption("ai")} />
+          <OptionCard title="Eigenes Foto hochladen" desc="Aus deiner Bibliothek" icon={Upload}
+            active={form.coverOption === "upload"} onClick={() => props.chooseCoverOption("upload")} />
+          <OptionCard title="Vorhandenes Bild" desc="Aus früheren Projekten" icon={ImageIcon}
+            active={form.coverOption === "existing"} onClick={() => props.chooseCoverOption("existing")} />
+          <OptionCard title="Kein Cover" desc="Song bleibt ohne Bild" icon={X}
+            active={form.coverOption === "none"} onClick={() => props.chooseCoverOption("none")} />
+        </div>
+
+        {form.coverOption === "ai" && form.covers.length > 0 && (
+          <div className="grid-4">
+            {form.covers.map((c, i) => (
+              <div key={c} className={`cover-pick ${form.chosenCoverIdx === i ? "cover-pick-active" : ""}`} onClick={() => set({ chosenCoverIdx: i })}>
+                <CoverArt seed={c} size={100} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {form.coverOption === "upload" && (
+          <label className="upload-zone">
+            <input type="file" accept="image/*" onChange={props.onUpload} style={{ display: "none" }} />
+            {form.uploadedImg ? (
+              <img src={form.uploadedImg} alt="Upload" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 12 }} />
+            ) : (
+              <>
+                <Upload size={22} />
+                <span>Bild auswählen</span>
+              </>
+            )}
+          </label>
+        )}
+
+        {form.coverOption === "existing" && (
+          <div className="grid-4">
+            {["Regen über Istanbul", "Sommerlicht"].map((s) => (
+              <div key={s} className="cover-pick cover-pick-active"><CoverArt seed={s} size={100} /></div>
+            ))}
+          </div>
+        )}
+      </StepShell>
+    );
+  }
+
+  if (stepKey === "done") {
+    const cover = form.coverOption === "ai" && form.chosenCoverIdx !== null ? form.covers[form.chosenCoverIdx]
+      : form.coverOption === "existing" ? "Regen über Istanbul" : null;
+    return (
+      <StepShell title="Song fertig 🎉" desc="Dein Track ist bereit — hör rein, exportiere oder starte den nächsten.">
+        <div className="done-card">
+          {form.coverOption === "upload" && form.uploadedImg ? (
+            <img src={form.uploadedImg} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 12 }} />
+          ) : cover ? <CoverArt seed={cover} size={72} rounded={12} />
+            : <div className="cover-empty"><Music2 size={22} /></div>}
+          <div>
+            <div className="done-title">{form.title}</div>
+            <div className="opt-desc">{GENRES.find((g) => g.id === form.genre)?.label} · {form.mood} · {form.language}</div>
+          </div>
+        </div>
+
+        {form.chosenVersion !== null && <Player version={form.versions[form.chosenVersion]} compact />}
+
+        {!props.videoOpen ? (
+          <button className="btn-primary mt-4" onClick={() => props.setVideoOpen(true)}>
+            <Video size={16} /> Video erstellen
+          </button>
+        ) : (
+          <div className="video-panel">
+            <div className="field-label">Format</div>
+            <div className="chip-row mb-3">
+              <Chip active={props.videoFormat === "16:9"} onClick={() => props.setVideoFormat("16:9")}>16:9 · YouTube</Chip>
+              <Chip active={props.videoFormat === "9:16"} onClick={() => props.setVideoFormat("9:16")}>9:16 · Shorts/TikTok</Chip>
+            </div>
+            <div className="field-label">Effekt</div>
+            <div className="chip-row mb-4">
+              {VIDEO_EFFECTS.map((fx) => (
+                <Chip key={fx} active={props.videoFx === fx} onClick={() => props.setVideoFx(fx)}>{fx}</Chip>
+              ))}
+            </div>
+
+            {props.videoState === "idle" && (
+              <button className="btn-primary" onClick={props.renderVideo}><Video size={16} /> Rendern (−8 Credits)</button>
+            )}
+            {props.videoState === "rendering" && (
+              <div className="generating small"><Eq size={7} /><p className="mt-2">Video wird gerendert …</p></div>
+            )}
+            {props.videoState === "ready" && (
+              <div className="ready-box">
+                <Check size={16} /> Video bereit — {props.videoFormat} · {props.videoFx}
+                <button className="btn-ghost ml-auto" disabled title="Demo – kein echter Export"><Download size={14} /> Export</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="flex gap-3 mt-6">
+          <button className="btn-ghost" onClick={props.restart}><RotateCcw size={14} /> Neuen Song erstellen</button>
+          <button className="btn-ghost" onClick={props.goDashboard}>Zum Dashboard</button>
+        </div>
+      </StepShell>
+    );
+  }
+
+  return null;
+}
+
+function StepShell({ title, desc, children }) {
+  return (
+    <div>
+      <h2 className="step-title">{title}</h2>
+      {desc && <p className="muted mb-5">{desc}</p>}
+      {children}
+    </div>
+  );
+}
+
+/* --------------------------------- STYLE ------------------------------------ */
+
+function GlobalStyle() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+      .songora-root {
+        --ink: #14181A;
+        --ink-2: #1D2326;
+        --ink-3: #262D30;
+        --paper: #ECEFE8;
+        --paper-dim: #B9C0B7;
+        --amber: #E3A542;
+        --rose: #C4534A;
+        --teal: #4E8C82;
+        font-family: 'Inter', sans-serif;
+        background:
+          radial-gradient(ellipse 900px 500px at 15% -10%, rgba(227,165,66,0.14), transparent 60%),
+          radial-gradient(ellipse 700px 500px at 100% 10%, rgba(196,83,74,0.12), transparent 55%),
+          var(--ink);
+        color: var(--paper);
+        min-height: 600px;
+        border-radius: 16px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .songora-root::before {
+        content: "";
+        position: absolute; inset: 0; pointer-events: none; z-index: 0;
+        opacity: 0.05; mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .songora-root > * { position: relative; z-index: 1; }
+      .songora-root * { box-sizing: border-box; }
+      .mb-1{margin-bottom:4px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}.mb-5{margin-bottom:20px}.mb-6{margin-bottom:24px}
+      .mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.mt-6{margin-top:24px}
+      .ml-auto{margin-left:auto}
+      .flex{display:flex}.flex-col{flex-direction:column}.flex-1{flex:1}.items-center{align-items:center}
+      .items-end{align-items:flex-end}.justify-between{justify-content:space-between}.gap-1{gap:4px}.gap-3{gap:12px}.gap-4{gap:16px}
+
+      .muted { color: var(--paper-dim); font-size: 14px; line-height: 1.5; }
+      .label-mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.02em; }
+
+      .brand { display:flex; align-items:center; gap:8px; font-family:'Fraunces',serif; font-weight:600; font-size:18px; color:var(--paper); }
+      .brand-dot { color: var(--amber); }
+
+      .header { display:flex; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--ink-3); backdrop-filter:blur(6px); }
+      .header-right { display:flex; align-items:center; gap:12px; }
+      .credits-pill { display:flex; align-items:center; gap:6px; background:var(--ink-2); padding:6px 12px; border-radius:20px; color:var(--amber); border:1px solid var(--ink-3); box-shadow:inset 0 1px 0 rgba(255,255,255,0.03); }
+      .avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg, var(--rose), #a8443c); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; box-shadow:0 4px 12px -4px rgba(196,83,74,0.6); }
+
+      .landing { position:relative; padding:24px; min-height:600px; display:flex; flex-direction:column; }
+      .landing-glow { position:absolute; top:-120px; right:-80px; width:420px; height:420px; border-radius:50%; background:radial-gradient(circle, rgba(227,165,66,0.16), transparent 70%); pointer-events:none; }
+      .landing-top { display:flex; }
+      .landing-body { flex:1; display:flex; align-items:center; gap:32px; padding:20px 12px 40px; flex-wrap:wrap; }
+      .landing-hero { flex:1; min-width:320px; display:flex; flex-direction:column; justify-content:center; max-width:520px; }
+      .eyebrow { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--amber); letter-spacing:0.04em; margin-bottom:18px; }
+      .eyebrow .dot { color:var(--paper-dim); }
+      .landing-hero h1 { font-family:'Fraunces',serif; font-weight:600; font-size:46px; line-height:1.06; margin:0 0 20px; letter-spacing:-0.01em; }
+      .landing-hero h1 em { font-style:italic; color:var(--amber); font-weight:400; }
+      .landing-hero p { color:var(--paper-dim); font-size:16px; line-height:1.6; margin-bottom:28px; max-width:440px; }
+      .landing-stats { display:flex; gap:28px; margin-top:36px; }
+      .landing-stats > div { display:flex; flex-direction:column; gap:2px; }
+      .stat-num { font-family:'Fraunces',serif; font-size:20px; font-weight:600; color:var(--paper); }
+      .stat-label { font-size:11px; color:var(--paper-dim); text-transform:uppercase; letter-spacing:0.04em; }
+
+      .landing-visual { display:flex; flex-direction:column; align-items:center; gap:24px; min-width:220px; }
+      .vinyl { position:relative; width:200px; height:200px; border-radius:50%;
+        background: repeating-radial-gradient(circle, #0d1012 0px, #0d1012 2px, #1a2023 3px, #1a2023 5px);
+        box-shadow: 0 0 0 1px var(--ink-3), 0 20px 50px -10px rgba(0,0,0,0.6), 0 0 60px -10px rgba(227,165,66,0.25);
+        animation: spin 9s linear infinite;
+        display:flex; align-items:center; justify-content:center;
+      }
+      .vinyl-label { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, var(--amber), var(--rose)); display:flex; align-items:center; justify-content:center; color:var(--ink); box-shadow: inset 0 0 0 2px rgba(0,0,0,0.2); }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      .landing-bars { display:flex; align-items:flex-end; gap:4px; height:44px; opacity:0.85; }
+      .landing-bar { background:linear-gradient(180deg, var(--amber), var(--rose)); border-radius:2px; }
+
+      .eq-bar { background:var(--amber); border-radius:2px; animation: eq 1s ease-in-out infinite; height:100%; }
+      @keyframes eq { 0%,100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+
+      .btn-primary { font-family:'Inter',sans-serif; display:flex; align-items:center; gap:8px; justify-content:center; background:linear-gradient(135deg, var(--amber), #d18d2e); color:var(--ink); border:none; padding:11px 20px; border-radius:10px; font-weight:600; font-size:14px; cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; box-shadow: 0 6px 20px -6px rgba(227,165,66,0.5); }
+      .btn-primary:hover:not(:disabled) { transform:translateY(-1px); box-shadow: 0 10px 26px -6px rgba(227,165,66,0.6); }
+      .btn-primary:active:not(:disabled) { transform:translateY(0); }
+      .btn-primary:disabled { opacity:0.35; cursor:not-allowed; box-shadow:none; }
+      .btn-lg { padding:14px 26px; font-size:15px; width:fit-content; }
+      .btn-ghost { display:flex; align-items:center; gap:6px; background:transparent; color:var(--paper); border:1px solid var(--ink-3); padding:10px 16px; border-radius:10px; font-size:14px; cursor:pointer; transition:border-color 0.15s, background 0.15s; }
+      .btn-ghost:hover:not(:disabled) { border-color:var(--paper-dim); background:var(--ink-2); }
+      .btn-ghost:disabled { opacity:0.35; cursor:not-allowed; }
+
+      .page { padding:28px 32px; overflow-y:auto; }
+      .page-title { font-family:'Fraunces',serif; font-size:26px; font-weight:600; margin:0 0 6px; }
+      .section-title { font-family:'Fraunces',serif; font-size:18px; font-weight:600; margin:28px 0 14px; }
+
+      .new-song-card { display:flex; align-items:center; gap:14px; background:var(--ink-2); border:1px solid var(--ink-3); padding:18px 20px; border-radius:14px; cursor:pointer; width:100%; text-align:left; color:var(--paper); transition:border-color 0.15s, transform 0.15s, box-shadow 0.15s; }
+      .new-song-card:hover { border-color: var(--amber); transform:translateY(-2px); box-shadow:0 14px 30px -12px rgba(0,0,0,0.5); }
+      .new-song-icon { width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg, var(--amber), var(--rose)); color:var(--ink); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 6px 16px -4px rgba(227,165,66,0.5); }
+
+      .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+      .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+      .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+      .project-card { display:flex; align-items:center; gap:12px; background:var(--ink-2); border:1px solid var(--ink-3); padding:14px; border-radius:12px; transition:transform 0.15s, border-color 0.15s; }
+      .project-card:hover { transform:translateY(-2px); border-color:var(--ink-3); box-shadow:0 12px 26px -12px rgba(0,0,0,0.5); }
+
+      .wizard { display:flex; flex:1; overflow:hidden; }
+      .rail { width:210px; padding:24px 12px; border-right:1px solid var(--ink-3); display:flex; flex-direction:column; gap:2px; overflow-y:auto; position:relative; }
+      .rail-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; position:relative; transition:background 0.15s; }
+      .rail-num { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-family:'IBM Plex Mono',monospace; flex-shrink:0; border:1px solid var(--ink-3); color:var(--paper-dim); transition:all 0.2s; z-index:1; background:var(--ink); }
+      .rail-label { font-size:13px; color:var(--paper-dim); transition:color 0.2s; }
+      .rail-item:not(:last-child)::before { content:""; position:absolute; left:20px; top:28px; width:1px; height:20px; background:var(--ink-3); }
+      .rail-active { background:rgba(227,165,66,0.08); }
+      .rail-active .rail-num { background:var(--amber); color:var(--ink); border-color:var(--amber); box-shadow:0 0 0 4px rgba(227,165,66,0.15); }
+      .rail-active .rail-label { color:var(--paper); font-weight:600; }
+      .rail-done .rail-num { background:var(--teal); border-color:var(--teal); color:var(--ink); }
+      .rail-done .rail-label { color:var(--paper-dim); }
+
+      .wizard-main { flex:1; padding:24px 32px; display:flex; flex-direction:column; overflow-y:auto; }
+      .panel { background:var(--ink-2); border:1px solid var(--ink-3); border-radius:14px; }
+      .wizard-panel { padding:26px; flex:1; box-shadow:0 20px 50px -30px rgba(0,0,0,0.6); }
+      .step-title { font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin:0 0 6px; }
+      .step-enter { animation: stepIn 0.35s ease both; }
+      @keyframes stepIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+      .field-label { font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:var(--paper-dim); margin-bottom:8px; }
+
+      .wizard-nav { display:flex; justify-content:space-between; margin-top:20px; }
+
+      .opt-card { display:flex; align-items:center; gap:12px; text-align:left; background:var(--ink-3); border:1px solid transparent; padding:14px; border-radius:12px; cursor:pointer; color:var(--paper); transition:transform 0.15s, border-color 0.15s, background 0.15s; }
+      .opt-card:hover { transform:translateY(-1px); background:#2b3336; }
+      .opt-card-active { border-color:var(--amber); background:rgba(227,165,66,0.1); box-shadow:0 8px 22px -12px rgba(227,165,66,0.35); }
+      .opt-icon { color:var(--amber); flex-shrink:0; }
+      .opt-title { font-weight:600; font-size:14px; }
+      .opt-desc { font-size:12px; color:var(--paper-dim); margin-top:2px; }
+      .opt-check { margin-left:auto; color:var(--amber); flex-shrink:0; }
+
+      .chip-row { display:flex; flex-wrap:wrap; gap:8px; }
+      .chip { background:var(--ink-3); border:1px solid transparent; color:var(--paper); padding:8px 14px; border-radius:20px; font-size:13px; cursor:pointer; transition:transform 0.12s, background 0.15s; }
+      .chip:hover { background:#2b3336; }
+      .chip-active { background:var(--amber); color:var(--ink); font-weight:600; box-shadow:0 6px 16px -6px rgba(227,165,66,0.5); }
+      .chip-active:hover { background:var(--amber); }
+
+      .textarea, .text-input { width:100%; background:var(--ink-3); border:1px solid var(--ink-3); color:var(--paper); border-radius:10px; padding:14px; font-size:14px; font-family:'Inter',sans-serif; resize:vertical; transition:border-color 0.15s; }
+      .textarea:focus, .text-input:focus { outline:none; border-color:var(--amber); box-shadow:0 0 0 3px rgba(227,165,66,0.12); }
+      .mono { font-family:'IBM Plex Mono',monospace; font-size:13px; line-height:1.6; white-space:pre-wrap; }
+
+      .play-btn { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, var(--amber), #d18d2e); color:var(--ink); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; box-shadow:0 6px 16px -6px rgba(227,165,66,0.55); transition:transform 0.12s; }
+      .play-btn:hover { transform:scale(1.06); }
+      .wave-bar { flex:1; min-width:2px; border-radius:1px; transition:background 0.2s; }
+
+      .version-wrap { border-radius:14px; cursor:pointer; border:2px solid transparent; transition:border-color 0.15s, transform 0.15s; }
+      .version-wrap:hover { transform:translateY(-1px); }
+      .version-active { border-color: var(--amber); box-shadow:0 10px 26px -14px rgba(227,165,66,0.45); }
+
+      .cover-pick { border-radius:14px; cursor:pointer; border:2px solid transparent; padding:2px; transition:border-color 0.15s, transform 0.15s; }
+      .cover-pick:hover { transform:translateY(-2px); }
+      .cover-pick-active { border-color:var(--amber); box-shadow:0 10px 24px -14px rgba(227,165,66,0.5); }
+      .cover-empty { width:72px; height:72px; border-radius:12px; background:var(--ink-3); display:flex; align-items:center; justify-content:center; color:var(--paper-dim); }
+
+      .upload-zone { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; border:1.5px dashed var(--ink-3); border-radius:12px; padding:28px; cursor:pointer; color:var(--paper-dim); font-size:13px; width:fit-content; transition:border-color 0.15s, background 0.15s; }
+      .upload-zone:hover { border-color:var(--amber); background:rgba(227,165,66,0.05); }
+
+      .generating { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; min-height:280px; color:var(--paper-dim); }
+      .generating.small { min-height:auto; padding:20px 0; }
+
+      .done-card { display:flex; align-items:center; gap:16px; margin-bottom:20px; padding:14px; background:linear-gradient(135deg, rgba(227,165,66,0.08), rgba(196,83,74,0.05)); border:1px solid var(--ink-3); border-radius:14px; }
+      .done-title { font-family:'Fraunces',serif; font-size:20px; font-weight:600; }
+
+      .video-panel { background:var(--ink-3); border-radius:12px; padding:18px; margin-top:14px; animation: stepIn 0.3s ease both; }
+      .ready-box { display:flex; align-items:center; gap:8px; background:rgba(78,140,130,0.15); border:1px solid var(--teal); color:var(--paper); padding:12px 14px; border-radius:10px; font-size:13px; box-shadow:0 8px 20px -12px rgba(78,140,130,0.5); }
+    `}</style>
+  );
+}
