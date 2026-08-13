@@ -1,12 +1,18 @@
 # songora
 
-Responsive React/Vite Demo mit Webseitensprachen:
+Responsive, mehrsprachige React/Vite-Demo.
 
+Die Oberfläche erkennt die aktuelle Bildschirmbreite und wechselt automatisch zwischen:
+- Desktop
+- Tablet
+- Mobile
+
+Zusätzlich reagiert sie auf Größenänderungen und Drehung des Geräts.
+
+Webseitensprachen:
 - Deutsch
 - English
 - Türkçe
-
-Die gewählte Webseitensprache wird im Browser gespeichert und bleibt beim nächsten Besuch erhalten.
 
 ## Lokal starten
 

@@ -245,6 +245,30 @@ const UI = {
   },
 };
 
+
+function useDeviceClass() {
+  const getDevice = () => {
+    const w = window.innerWidth;
+    if (w <= 640) return "mobile";
+    if (w <= 1024) return "tablet";
+    return "desktop";
+  };
+
+  const [device, setDevice] = useState(getDevice);
+
+  useEffect(() => {
+    const onResize = () => setDevice(getDevice());
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, []);
+
+  return device;
+}
+
 function LangSwitch({ siteLang, setSiteLang }) {
   return (
     <div className="lang-switch" aria-label={UI[siteLang].websiteLanguage}>
@@ -567,7 +591,7 @@ function stepLabel(key, t) {
   }[key] || key;
 }
 
-function StepRail({ step, form, t }) {
+function StepRail({ step, form, t, device }) {
   return (
     <div className="rail">
       {STEPS.map((s, i) => {
@@ -576,7 +600,7 @@ function StepRail({ step, form, t }) {
         return (
           <div key={s.key} className={`rail-item rail-${state}`}>
             <div className="rail-num">{state === "done" ? <Check size={12} /> : i + 1}</div>
-            <span className="rail-label">{stepLabel(s.key, t)}</span>
+            <span className={`rail-label ${device === "mobile" ? "rail-label-mobile" : ""}`}>{stepLabel(s.key, t)}</span>
           </div>
         );
       })}
@@ -606,6 +630,7 @@ export default function SongoraApp() {
   const [videoFx, setVideoFx] = useState("Ken-Burns");
   const [siteLang, setSiteLang] = useState(() => localStorage.getItem("songora-site-lang") || "de");
   const t = UI[siteLang];
+  const device = useDeviceClass();
   useEffect(() => {
     localStorage.setItem("songora-site-lang", siteLang);
     document.documentElement.lang = siteLang;
@@ -701,7 +726,7 @@ export default function SongoraApp() {
 
   if (view === "landing") {
     return (
-      <div className="songora-root">
+      <div className={`songora-root device-${device}`}>
         <GlobalStyle />
         <div className="landing">
           <div className="landing-glow" />
@@ -745,7 +770,7 @@ export default function SongoraApp() {
 
   if (view === "dashboard") {
     return (
-      <div className="songora-root">
+      <div className={`songora-root device-${device}`}>
         <GlobalStyle />
         <Header credits={credits} onLogo={() => setView("dashboard")} siteLang={siteLang} setSiteLang={setSiteLang} />
         <div className="page">
@@ -786,11 +811,11 @@ export default function SongoraApp() {
   const key = STEPS[step].key;
 
   return (
-    <div className="songora-root">
+    <div className={`songora-root device-${device}`}>
       <GlobalStyle />
       <Header credits={credits} onLogo={() => setView("dashboard")} siteLang={siteLang} setSiteLang={setSiteLang} />
       <div className="wizard">
-        <StepRail step={step} form={form} t={t} />
+        <StepRail step={step} form={form} t={t} device={device} />
         <div className="wizard-main">
           <div className="panel wizard-panel">
             {generating ? (
@@ -1325,6 +1350,134 @@ function GlobalStyle() {
 
       .video-panel { background:var(--ink-3); border-radius:12px; padding:18px; margin-top:14px; animation: stepIn 0.3s ease both; }
       .ready-box { display:flex; align-items:center; gap:8px; background:rgba(78,140,130,0.15); border:1px solid var(--teal); color:var(--paper); padding:12px 14px; border-radius:10px; font-size:13px; box-shadow:0 8px 20px -12px rgba(78,140,130,0.5); }
+
+
+      /* ---------------------- DEVICE-AWARE RESPONSIVE LAYOUT ---------------------- */
+      .songora-root {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .device-desktop .wizard {
+        min-height: calc(100vh - 64px);
+      }
+
+      .device-tablet .wizard,
+      .device-mobile .wizard {
+        flex-direction: column;
+        overflow: visible;
+      }
+
+      .device-tablet .rail,
+      .device-mobile .rail {
+        width: 100%;
+        max-width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        border-right: 0;
+        border-bottom: 1px solid var(--ink-3);
+        padding: 10px 12px;
+        gap: 8px;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: rgba(20,24,26,0.97);
+        backdrop-filter: blur(12px);
+      }
+
+      .device-tablet .rail-item,
+      .device-mobile .rail-item {
+        flex: 0 0 auto;
+        min-width: max-content;
+      }
+
+      .device-tablet .rail-item:not(:last-child)::before,
+      .device-mobile .rail-item:not(:last-child)::before {
+        display: none;
+      }
+
+      .device-tablet .wizard-main,
+      .device-mobile .wizard-main {
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+      }
+
+      .device-tablet .wizard-panel,
+      .device-mobile .wizard-panel {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .device-mobile .grid-2,
+      .device-mobile .grid-3,
+      .device-mobile .grid-4 {
+        grid-template-columns: 1fr !important;
+      }
+
+      .device-tablet .grid-3,
+      .device-tablet .grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .device-mobile .rail-label-mobile {
+        display: none;
+      }
+
+      .device-mobile .opt-card,
+      .device-mobile .new-song-card,
+      .device-mobile .project-card,
+      .device-mobile .textarea,
+      .device-mobile .text-input {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .device-mobile .wizard-main {
+        padding: 12px;
+      }
+
+      .device-mobile .wizard-panel {
+        padding: 14px;
+      }
+
+      .device-mobile .wizard-nav {
+        position: sticky;
+        bottom: 0;
+        z-index: 25;
+        background: linear-gradient(to top, var(--ink) 78%, transparent);
+        padding: 12px 0 4px;
+        gap: 8px;
+      }
+
+      .device-mobile .wizard-nav .btn-ghost,
+      .device-mobile .wizard-nav .btn-primary {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .device-mobile .songora-root,
+      .device-tablet .songora-root {
+        overflow-x: hidden;
+      }
+
+      @media (max-width: 640px) {
+        html, body, #root {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+        }
+
+        .songora-root {
+          min-height: 100vh;
+          border-radius: 0;
+        }
+
+        .landing {
+          min-height: 100vh;
+        }
+      }
 
 
       /* --------------------------- RESPONSIVE / MOBILE --------------------------- */
